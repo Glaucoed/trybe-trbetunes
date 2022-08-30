@@ -5,7 +5,27 @@ import Loading from './Loading';
 
 class Login extends React.Component {
   state = {
+    user: '',
+    isButtonDisable: true,
     loading: false,
+  };
+
+  habilitaBotao = ({ target: { name, value } }) => {
+    this.setState({
+      [name]: value,
+    }, () => {
+      const { user } = this.state;
+      const numberMin = 2;
+      if (user.length > numberMin) {
+        this.setState({
+          isButtonDisable: false,
+        });
+      } else {
+        this.setState({
+          isButtonDisable: true,
+        });
+      }
+    });
   };
 
   aguardandoFunction = (user) => {
@@ -20,7 +40,7 @@ class Login extends React.Component {
   };
 
   render() {
-    const { user, habilitaBotao, isButtonDisable } = this.props;
+    const { user, isButtonDisable } = this.state;
     const { loading } = this.state;
     return (
       loading ? (
@@ -35,7 +55,7 @@ class Login extends React.Component {
                   data-testid="login-name-input"
                   name="user"
                   value={ user }
-                  onChange={ habilitaBotao }
+                  onChange={ this.habilitaBotao }
                 />
               </label>
               <button

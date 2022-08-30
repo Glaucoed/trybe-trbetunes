@@ -1,14 +1,11 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
-import ProfileEdit from './ProfileEdit';
+import Header from '../Header';
 
 class Profile extends React.Component {
   render() {
     return (
       <div data-testid="page-profile">
-        <Switch>
-          <Route path="/profile/edit" component={ ProfileEdit } />
-        </Switch>
+        <Header />
       </div>
     );
   }
