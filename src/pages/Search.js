@@ -14,10 +14,6 @@ class Search extends React.Component {
     naoEncontrado: true,
   };
 
-  componentDidMount() {
-    this.findAlbum();
-  }
-
   findAlbum = async () => {
     const { artistas } = this.state;
     this.setState({ loadingAlbum: true, nomeArtista: artistas });

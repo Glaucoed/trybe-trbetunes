@@ -8,9 +8,9 @@ export default class Card extends Component {
     return (
 
       <div>
-        <img src={ artworkUrl100 } alt={ collectionName } />
         <h4>{collectionName}</h4>
-        <span>{artistName}</span>
+        <img src={ artworkUrl100 } alt={ collectionName } />
+        <p>{artistName}</p>
         <Link
           data-testid={ `link-to-album-${collectionId}` }
           to={ `/album/${collectionId}` }
