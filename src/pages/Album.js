@@ -34,6 +34,7 @@ class Album extends React.Component {
 
   render() {
     const { tracks, artistName, collectionName, artworkUrl100 } = this.state;
+    console.log(tracks);
     return (
       <div data-testid="page-album">
         <Header />
@@ -43,10 +44,12 @@ class Album extends React.Component {
           <h4 data-testid="artist-name">{artistName}</h4>
           {
             tracks
-              .map(({ trackName, previewUrl, trackId }) => (<MusicCard
-                key={ trackId }
-                trackName={ trackName }
-                previewUrl={ previewUrl }
+              .map((music) => (<MusicCard
+                key={ music.trackId }
+                trackName={ music.trackName }
+                previewUrl={ music.previewUrl }
+                trackId={ music.trackId }
+                music={ music }
               />))
           }
         </div>
