@@ -1,40 +1,64 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Loading from './pages/Loading';
-import { addSong } from './services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs } from './services/favoriteSongsAPI';
 
 export default class MusicCard extends Component {
   state = {
     favorite: false,
     loading: false,
+    listFavorites: [],
   };
 
-  chamaFuncao = async () => {
+  async componentDidMount() {
+    await this.retornoDaFuncao();
+    this.verifica();
+  }
+
+  retornoDaFuncao = async () => {
+    this.setState({ loading: true });
+    const favoriteMusics = await getFavoriteSongs();
+    this.setState({ loading: false, listFavorites: favoriteMusics });
+  };
+
+  verifica = () => {
+    const { listFavorites } = this.state;
+    const { trackId } = this.props;
+    listFavorites.find(({ music }) => {
+      if (music.trackId === trackId) {
+        return this.setState({ favorite: true });
+      }
+      return null;
+    });
+  };
+
+  enviaObj = async () => {
     const { music } = this.props;
     const { favorite } = this.state;
-    if (favorite === true) {
-      this.setState({ loading: true });
-      // const x = await addSong({ trackId, trackName, previewUrl });
-      // console.log(x);
-      console.log(music);
+    this.setState({ loading: true });
+    if (!favorite) {
       await addSong({ music });
-      this.setState({ loading: false });
+      this.setState({ loading: false, favorite: true });
+    } else {
+      this.setState({ favorite: false, loading: false });
     }
   };
 
-  onInputChange = ({ target }) => {
-    const { name, type } = target;
-    const value = type === 'checkbox' ? target.checked : target.value;
-    this.setState({
-      [name]: value,
-    }, () => this.chamaFuncao());
-  };
+  // onInputChange = ({ target }) => {
+  //   const { name } = target;
+  //   // const value = type === 'checkbox' ? target.checked : target.value;
+  //   this.setState({
+  //     [name]: true,
+  //   }, () => this.enviaObj());
+  // };
 
   render() {
     const { previewUrl, trackName, trackId } = this.props;
     const { favorite, loading } = this.state;
+
     return (
       <div>
+
         <h3>{ trackName }</h3>
         <audio data-testid="audio-component" src={ previewUrl } controls>
           <track kind="captions" />
@@ -55,11 +79,12 @@ export default class MusicCard extends Component {
                     name="favorite"
                     type="checkbox"
                     checked={ favorite }
-                    onChange={ this.onInputChange }
+                    onChange={ this.enviaObj }
 
                   />
                 </label>
               </form>
+
             )
         }
       </div>

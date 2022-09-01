@@ -9,6 +9,8 @@ class Album extends React.Component {
     artistName: '',
     collectionName: '',
     tracks: [],
+    // favoriteMusicCard: false,
+    // loadingMusicCard: false,
   };
 
   componentDidMount() {
@@ -34,7 +36,6 @@ class Album extends React.Component {
 
   render() {
     const { tracks, artistName, collectionName, artworkUrl100 } = this.state;
-    console.log(tracks);
     return (
       <div data-testid="page-album">
         <Header />
