@@ -3,19 +3,29 @@ import PropTypes from 'prop-types';
 import Header from '../Header';
 import MusicCard from '../MusicCard';
 import getMusics from '../services/musicsAPI';
+import Loading from './Loading';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends React.Component {
   state = {
     artistName: '',
     collectionName: '',
     tracks: [],
-    // favoriteMusicCard: false,
-    // loadingMusicCard: false,
+    listFavorites: [],
+    loading: false,
+
   };
 
   componentDidMount() {
     this.renderizaMusicas();
+    this.salvaLocalStorageNoState();
   }
+
+  salvaLocalStorageNoState = async () => {
+    this.setState({ loading: true });
+    const favoriteMusics = await getFavoriteSongs();
+    this.setState({ loading: false, listFavorites: favoriteMusics });
+  };
 
   renderizaMusicas = async () => {
     const { match: { params: { id } } } = this.props;
@@ -35,7 +45,13 @@ class Album extends React.Component {
   };
 
   render() {
-    const { tracks, artistName, collectionName, artworkUrl100 } = this.state;
+    const { tracks,
+      artistName,
+      collectionName,
+      artworkUrl100,
+      listFavorites,
+      loading } = this.state;
+
     return (
       <div data-testid="page-album">
         <Header />
@@ -44,14 +60,18 @@ class Album extends React.Component {
           <h3 data-testid="album-name">{collectionName}</h3>
           <h4 data-testid="artist-name">{artistName}</h4>
           {
-            tracks
-              .map((music) => (<MusicCard
-                key={ music.trackId }
-                trackName={ music.trackName }
-                previewUrl={ music.previewUrl }
-                trackId={ music.trackId }
-                music={ music }
-              />))
+            loading
+              ? <Loading />
+
+              : tracks
+                .map((music) => (<MusicCard
+                  key={ music.trackId }
+                  trackName={ music.trackName }
+                  previewUrl={ music.previewUrl }
+                  trackId={ music.trackId }
+                  music={ music }
+                  listFavorites={ listFavorites }
+                />))
           }
         </div>
       </div>

@@ -1,56 +1,40 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Loading from './pages/Loading';
-import { addSong, getFavoriteSongs } from './services/favoriteSongsAPI';
+import { addSong, removeSong } from './services/favoriteSongsAPI';
 
 export default class MusicCard extends Component {
   state = {
     favorite: false,
     loading: false,
-    listFavorites: [],
   };
 
   async componentDidMount() {
-    await this.retornoDaFuncao();
-    this.verifica();
+    this.verificaListFavoritesState();
   }
 
-  retornoDaFuncao = async () => {
-    this.setState({ loading: true });
-    const favoriteMusics = await getFavoriteSongs();
-    this.setState({ loading: false, listFavorites: favoriteMusics });
-  };
-
-  verifica = () => {
-    const { listFavorites } = this.state;
-    const { trackId } = this.props;
-    listFavorites.find(({ music }) => {
-      if (music.trackId === trackId) {
+  verificaListFavoritesState = () => {
+    const { trackId, listFavorites } = this.props;
+    listFavorites.some((musica) => {
+      if (musica.trackId === trackId) {
         return this.setState({ favorite: true });
       }
       return null;
     });
   };
 
-  enviaObj = async () => {
+  enviaFavoritoLocalStorage = async () => {
     const { music } = this.props;
     const { favorite } = this.state;
     this.setState({ loading: true });
     if (!favorite) {
-      await addSong({ music });
+      await addSong(music);
       this.setState({ loading: false, favorite: true });
     } else {
-      this.setState({ favorite: false, loading: false });
+      await removeSong(music);
+      this.setState({ loading: false, favorite: false });
     }
   };
-
-  // onInputChange = ({ target }) => {
-  //   const { name } = target;
-  //   // const value = type === 'checkbox' ? target.checked : target.value;
-  //   this.setState({
-  //     [name]: true,
-  //   }, () => this.enviaObj());
-  // };
 
   render() {
     const { previewUrl, trackName, trackId } = this.props;
@@ -79,7 +63,7 @@ export default class MusicCard extends Component {
                     name="favorite"
                     type="checkbox"
                     checked={ favorite }
-                    onChange={ this.enviaObj }
+                    onChange={ () => this.enviaFavoritoLocalStorage() }
 
                   />
                 </label>
